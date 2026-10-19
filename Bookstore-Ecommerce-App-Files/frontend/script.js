@@ -49,7 +49,6 @@ async function api(path, options = {}) {
 }
 
 // LOAD BOOKS FROM THE BACKEND
-
 async function loadBooks() {
   try {
     const result = await api("/books");
@@ -76,7 +75,6 @@ async function loadBooks() {
 }
 
 // CATEGORY FILTER
-
 function populateCategories() {
   const previousCategory = categoryFilter.value;
 
@@ -98,7 +96,6 @@ function populateCategories() {
 }
 
 // DISPLAY BOOKS
-
 function renderBooks() {
   const search = searchInput.value.trim().toLowerCase();
   const category = categoryFilter.value;
@@ -132,6 +129,8 @@ function renderBooks() {
   }
 
   grid.innerHTML = visibleBooks.map(book => {
+    const cleanId = String(book.id).replace(/[^0-9]/g, "");
+
     const imageHTML = book.image
       ? `
         <img
@@ -141,13 +140,13 @@ function renderBooks() {
           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
         >
         <div class="cover-placeholder"
-             style="--cover:${coverColor(book.id)};display:none">
+             style="--cover:${coverColor(cleanId)};display:none">
           ${escapeHTML(book.title)}
         </div>
       `
       : `
         <div class="cover-placeholder"
-             style="--cover:${coverColor(book.id)}">
+             style="--cover:${coverColor(cleanId)}">
           ${escapeHTML(book.title)}
         </div>
       `;
@@ -181,7 +180,7 @@ function renderBooks() {
           <div style="display: flex; gap: 6px; align-items: center;">
             <button
               class="add-button"
-              data-add="${Number(book.id)}"
+              data-add="${cleanId}"
               ${book.stock < 1 ? "disabled" : ""}
             >
               ${book.stock > 0 ? "＋ Add" : "Sold out"}
@@ -189,7 +188,7 @@ function renderBooks() {
 
             <button
               class="delete-button"
-              data-delete="${Number(book.id)}"
+              data-delete="${cleanId}"
               style="background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600;"
             >
               🗑️
@@ -215,12 +214,13 @@ function coverColor(id) {
 }
 
 // DELETE BOOK FROM BACKEND
-
 async function deleteBook(id) {
+  const cleanId = String(id).replace(/[^0-9]/g, "");
+
   if (!confirm("Are you sure you want to delete this book?")) return;
 
   try {
-    await api(`/books/${id}`, { method: "DELETE" });
+    await api(`/books/${cleanId}`, { method: "DELETE" });
     alert("Book deleted successfully!");
     await loadBooks();
   } catch (error) {
@@ -229,7 +229,6 @@ async function deleteBook(id) {
 }
 
 // SHOPPING CART
-
 function openCart() {
   cartPanel.classList.add("open");
   overlay.classList.add("show");
@@ -243,11 +242,12 @@ function closeCart() {
 }
 
 function addToCart(id) {
-  const book = books.find(item => item.id === Number(id));
+  const cleanId = Number(String(id).replace(/[^0-9]/g, ""));
+  const book = books.find(item => Number(item.id) === cleanId);
 
   if (!book || book.stock < 1) return;
 
-  const existingItem = cart.find(item => item.bookId === book.id);
+  const existingItem = cart.find(item => Number(item.bookId) === cleanId);
 
   if (existingItem) {
     if (existingItem.quantity >= book.stock) {
@@ -258,7 +258,7 @@ function addToCart(id) {
     existingItem.quantity++;
   } else {
     cart.push({
-      bookId: book.id,
+      bookId: Number(book.id),
       title: book.title,
       price: Number(book.price),
       quantity: 1,
@@ -270,14 +270,15 @@ function addToCart(id) {
 }
 
 function changeQuantity(id, change) {
-  const item = cart.find(row => row.bookId === Number(id));
+  const cleanId = Number(String(id).replace(/[^0-9]/g, ""));
+  const item = cart.find(row => Number(row.bookId) === cleanId);
 
   if (!item) return;
 
   const newQuantity = item.quantity + change;
 
   if (newQuantity <= 0) {
-    cart = cart.filter(row => row.bookId !== Number(id));
+    cart = cart.filter(row => Number(row.bookId) !== cleanId);
   } else if (newQuantity > item.stock) {
     alert("You have reached the available stock limit.");
   } else {
@@ -334,7 +335,6 @@ function renderCart() {
 }
 
 // CHECKOUT AND SAVE ORDER TO BACKEND
-
 async function checkout() {
   if (cart.length === 0) {
     alert("Your cart is empty.");
@@ -382,8 +382,7 @@ async function checkout() {
   }
 }
 
-// ADD NEW BOOK — FIXED FORM HANDLER
-
+// ADD NEW BOOK — FORM HANDLER
 document.getElementById("addBookForm").addEventListener(
   "submit",
   async function (event) {
@@ -441,7 +440,6 @@ document.getElementById("addBookForm").addEventListener(
 );
 
 // EVENT LISTENERS
-
 grid.addEventListener("click", event => {
   const addButton = event.target.closest("[data-add]");
   if (addButton) {
@@ -471,25 +469,15 @@ searchInput.addEventListener("input", renderBooks);
 categoryFilter.addEventListener("change", renderBooks);
 sortFilter.addEventListener("change", renderBooks);
 
-document.getElementById("cartToggle").addEventListener(
-  "click", openCart
-);
-
-document.getElementById("closeCart").addEventListener(
-  "click", closeCart
-);
-
+document.getElementById("cartToggle").addEventListener("click", openCart);
+document.getElementById("closeCart").addEventListener("click", closeCart);
 overlay.addEventListener("click", closeCart);
-
-document.getElementById("checkoutButton").addEventListener(
-  "click", checkout
-);
+document.getElementById("checkoutButton").addEventListener("click", checkout);
 
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") closeCart();
 });
 
 // START APPLICATION
-
 renderCart();
 loadBooks();
