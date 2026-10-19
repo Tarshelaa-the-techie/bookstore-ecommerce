@@ -1,5 +1,5 @@
 
-const API = "/api";
+const API = "https://bookstore-ecommerce-tryp.onrender.com/api";
 
 const grid = document.getElementById("bookGrid");
 const searchInput = document.getElementById("searchInput");
