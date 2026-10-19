@@ -14,31 +14,12 @@ app.use(express.json({ limit: "1mb" }));
 app.use(express.static(FRONTEND_DIR));
 
 initializeDatabase();
-// Endpoint to delete a book by its ID
-app.delete("/api/books/:id", (req, res) => {
-  try {
-    const bookId = Number(req.params.id);
-    let books = getBooks();
-
-    const bookExists = books.some(b => b.id === bookId);
-    if (!bookExists) {
-      return res.status(404).json({ error: "Book not found." });
-    }
-
-    // Filter out the book with the matching ID
-    books = books.filter(b => b.id !== bookId);
-    saveBooks(books);
-
-    res.json({ message: "Book deleted successfully." });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Bookstore backend is running." });
 });
 
+// GET ALL BOOKS
 app.get("/api/books", (req, res) => {
   try {
     const books = getBooks();
@@ -54,6 +35,7 @@ app.get("/api/books", (req, res) => {
   }
 });
 
+// ADD A NEW BOOK
 app.post("/api/books", (req, res) => {
   const title = String(req.body.title || "").trim();
   const author = String(req.body.author || "").trim();
@@ -87,6 +69,28 @@ app.post("/api/books", (req, res) => {
   }
 });
 
+// DELETE A BOOK BY ID (FIXED ID TYPE MATCHING)
+app.delete("/api/books/:id", (req, res) => {
+  try {
+    const bookId = Number(req.params.id);
+    let books = getBooks();
+
+    const bookExists = books.some(b => Number(b.id) === bookId);
+    if (!bookExists) {
+      return res.status(404).json({ error: "Book not found." });
+    }
+
+    // Filter out the book matching the ID
+    books = books.filter(b => Number(b.id) !== bookId);
+    saveBooks(books);
+
+    res.json({ message: "Book deleted successfully." });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET ORDERS
 app.get("/api/orders", (req, res) => {
   try {
     res.json(getOrders());
@@ -95,6 +99,7 @@ app.get("/api/orders", (req, res) => {
   }
 });
 
+// PLACE AN ORDER
 app.post("/api/orders", (req, res) => {
   const customerName = String(req.body.customerName || "").trim();
   const email = String(req.body.email || "").trim();
@@ -120,7 +125,7 @@ app.post("/api/orders", (req, res) => {
     for (const requested of requestedItems) {
       const bookId = Number(requested.bookId);
       const quantity = Number(requested.quantity);
-      const book = books.find(item => item.id === bookId);
+      const book = books.find(item => Number(item.id) === bookId);
 
       if (!book) return res.status(400).json({ error: `Book ${bookId} no longer exists.` });
       if (!Number.isInteger(quantity) || quantity < 1) {
@@ -135,8 +140,10 @@ app.post("/api/orders", (req, res) => {
     }
 
     for (const item of orderItems) {
-      const book = books.find(book => book.id === item.bookId);
-      book.stock -= item.quantity;
+      const book = books.find(book => Number(book.id) === item.bookId);
+      if (book) {
+        book.stock -= item.quantity;
+      }
     }
 
     const nextId = orders.reduce((max, order) => Math.max(max, Number(order.id) || 1000), 1000) + 1;
