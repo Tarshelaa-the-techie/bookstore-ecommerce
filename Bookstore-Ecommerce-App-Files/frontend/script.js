@@ -129,7 +129,8 @@ function renderBooks() {
   }
 
   grid.innerHTML = visibleBooks.map(book => {
-    const cleanId = String(book.id).replace(/[^0-9]/g, "");
+    // Extract pure numeric integer ID
+    const cleanId = parseInt(String(book.id).replace(/\D/g, ""), 10);
 
     const imageHTML = book.image
       ? `
@@ -213,9 +214,15 @@ function coverColor(id) {
   return colors[Math.abs(Number(id) || 0) % colors.length];
 }
 
-// DELETE BOOK FROM BACKEND
+// DELETE BOOK FROM BACKEND — CLEAN ID PARSING
 async function deleteBook(id) {
-  const cleanId = String(id).replace(/[^0-9]/g, "");
+  // Strip everything that isn't a digit (removes colons like :1)
+  const cleanId = parseInt(String(id).replace(/\D/g, ""), 10);
+
+  if (isNaN(cleanId)) {
+    alert("Invalid book ID.");
+    return;
+  }
 
   if (!confirm("Are you sure you want to delete this book?")) return;
 
@@ -242,7 +249,7 @@ function closeCart() {
 }
 
 function addToCart(id) {
-  const cleanId = Number(String(id).replace(/[^0-9]/g, ""));
+  const cleanId = parseInt(String(id).replace(/\D/g, ""), 10);
   const book = books.find(item => Number(item.id) === cleanId);
 
   if (!book || book.stock < 1) return;
@@ -258,7 +265,7 @@ function addToCart(id) {
     existingItem.quantity++;
   } else {
     cart.push({
-      bookId: Number(book.id),
+      bookId: cleanId,
       title: book.title,
       price: Number(book.price),
       quantity: 1,
@@ -270,7 +277,7 @@ function addToCart(id) {
 }
 
 function changeQuantity(id, change) {
-  const cleanId = Number(String(id).replace(/[^0-9]/g, ""));
+  const cleanId = parseInt(String(id).replace(/\D/g, ""), 10);
   const item = cart.find(row => Number(row.bookId) === cleanId);
 
   if (!item) return;
