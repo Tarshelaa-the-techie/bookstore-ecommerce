@@ -1,4 +1,3 @@
-
 const API = "https://bookstore-ecommerce-tryp.onrender.com/api";
 
 const grid = document.getElementById("bookGrid");
@@ -179,13 +178,23 @@ function renderBooks() {
         <div class="book-bottom">
           <span class="price">${money(book.price)}</span>
 
-          <button
-            class="add-button"
-            data-add="${Number(book.id)}"
-            ${book.stock < 1 ? "disabled" : ""}
-          >
-            ${book.stock > 0 ? "＋ Add" : "Sold out"}
-          </button>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <button
+              class="add-button"
+              data-add="${Number(book.id)}"
+              ${book.stock < 1 ? "disabled" : ""}
+            >
+              ${book.stock > 0 ? "＋ Add" : "Sold out"}
+            </button>
+
+            <button
+              class="delete-button"
+              data-delete="${Number(book.id)}"
+              style="background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600;"
+            >
+              🗑️
+            </button>
+          </div>
         </div>
       </article>
     `;
@@ -203,6 +212,20 @@ function coverColor(id) {
   ];
 
   return colors[Math.abs(Number(id) || 0) % colors.length];
+}
+
+// DELETE BOOK FROM BACKEND
+
+async function deleteBook(id) {
+  if (!confirm("Are you sure you want to delete this book?")) return;
+
+  try {
+    await api(`/books/${id}`, { method: "DELETE" });
+    alert("Book deleted successfully!");
+    await loadBooks();
+  } catch (error) {
+    alert(`Could not delete book: ${error.message}`);
+  }
 }
 
 // SHOPPING CART
@@ -366,7 +389,6 @@ document.getElementById("addBookForm").addEventListener(
   async function (event) {
     event.preventDefault();
 
-    // Save the form reference BEFORE the first await.
     const formElement = event.currentTarget;
     const formData = new FormData(formElement);
 
@@ -404,7 +426,6 @@ document.getElementById("addBookForm").addEventListener(
         body: JSON.stringify(payload)
       });
 
-      // Use formElement, not event.currentTarget, after await.
       formElement.reset();
       formElement.elements.stock.value = 10;
 
@@ -422,11 +443,16 @@ document.getElementById("addBookForm").addEventListener(
 // EVENT LISTENERS
 
 grid.addEventListener("click", event => {
-  const button = event.target.closest("[data-add]");
-
-  if (button) {
-    addToCart(button.dataset.add);
+  const addButton = event.target.closest("[data-add]");
+  if (addButton) {
+    addToCart(addButton.dataset.add);
     openCart();
+    return;
+  }
+
+  const deleteButton = event.target.closest("[data-delete]");
+  if (deleteButton) {
+    deleteBook(deleteButton.dataset.delete);
   }
 });
 
