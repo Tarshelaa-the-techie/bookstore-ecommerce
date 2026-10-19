@@ -9,7 +9,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const FRONTEND_DIR = path.join(__dirname, "..", "frontend");
 
-// CORS configuration to allow DELETE method
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
@@ -75,25 +74,20 @@ app.post("/api/books", (req, res) => {
   }
 });
 
-// DELETE A BOOK BY ID (FIXED LOOSE ID MATCHING)
+// DELETE A BOOK BY ID (LOOSE MATCHING FIX)
 app.delete("/api/books/:id", (req, res) => {
   try {
-    const targetId = String(req.params.id).trim();
+    const reqId = String(req.params.id).trim();
     let books = getBooks();
 
-    // Check match converting both sides to String and Number to guarantee hit
-    const bookIndex = books.findIndex(
-      b => String(b.id).trim() === targetId || Number(b.id) === Number(targetId)
-    );
+    const initialCount = books.length;
+    books = books.filter(b => String(b.id).trim() !== reqId && Number(b.id) !== Number(reqId));
 
-    if (bookIndex === -1) {
-      return res.status(404).json({ error: `Book with ID ${targetId} not found.` });
+    if (books.length === initialCount) {
+      return res.status(404).json({ error: `Book with ID ${reqId} not found.` });
     }
 
-    // Remove the matching book
-    books.splice(bookIndex, 1);
     saveBooks(books);
-
     res.json({ message: "Book deleted successfully." });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -183,6 +177,4 @@ app.get("*", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Bookstore running at http://localhost:${PORT}`);
-  console.log(`Books database: ${path.join(__dirname, "books.json")}`);
-  console.log(`Orders database: ${path.join(__dirname, "orders.json")}`);
 });
