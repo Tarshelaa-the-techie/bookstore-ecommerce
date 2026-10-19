@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const FRONTEND_DIR = path.join(__dirname, "..", "frontend");
 
-// Explicit CORS configuration to allow DELETE HTTP requests from frontend
+// CORS configuration to allow DELETE method
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
@@ -75,18 +75,23 @@ app.post("/api/books", (req, res) => {
   }
 });
 
-// DELETE A BOOK BY ID
+// DELETE A BOOK BY ID (FIXED LOOSE ID MATCHING)
 app.delete("/api/books/:id", (req, res) => {
   try {
-    const bookId = Number(req.params.id);
+    const targetId = String(req.params.id).trim();
     let books = getBooks();
 
-    const bookExists = books.some(b => Number(b.id) === bookId);
-    if (!bookExists) {
-      return res.status(404).json({ error: "Book not found." });
+    // Check match converting both sides to String and Number to guarantee hit
+    const bookIndex = books.findIndex(
+      b => String(b.id).trim() === targetId || Number(b.id) === Number(targetId)
+    );
+
+    if (bookIndex === -1) {
+      return res.status(404).json({ error: `Book with ID ${targetId} not found.` });
     }
 
-    books = books.filter(b => Number(b.id) !== bookId);
+    // Remove the matching book
+    books.splice(bookIndex, 1);
     saveBooks(books);
 
     res.json({ message: "Book deleted successfully." });
