@@ -368,4 +368,5 @@ app.get("*", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Bookstore running on port ${PORT}`);
   console.log("Frontend directory:", FRONTEND_DIR);
-});
+}
+);
