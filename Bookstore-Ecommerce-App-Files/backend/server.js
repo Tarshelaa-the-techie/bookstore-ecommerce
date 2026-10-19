@@ -9,7 +9,13 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const FRONTEND_DIR = path.join(__dirname, "..", "frontend");
 
-app.use(cors());
+// Explicit CORS configuration to allow DELETE HTTP requests from frontend
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(FRONTEND_DIR));
 
@@ -69,7 +75,7 @@ app.post("/api/books", (req, res) => {
   }
 });
 
-// DELETE A BOOK BY ID (FIXED ID TYPE MATCHING)
+// DELETE A BOOK BY ID
 app.delete("/api/books/:id", (req, res) => {
   try {
     const bookId = Number(req.params.id);
@@ -80,7 +86,6 @@ app.delete("/api/books/:id", (req, res) => {
       return res.status(404).json({ error: "Book not found." });
     }
 
-    // Filter out the book matching the ID
     books = books.filter(b => Number(b.id) !== bookId);
     saveBooks(books);
 
