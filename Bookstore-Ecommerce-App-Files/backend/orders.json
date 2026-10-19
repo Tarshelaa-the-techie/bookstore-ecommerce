@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1001,
+    "customerName": "Tarshelaa",
+    "email": "tarshelaamary14@gmail.com",
+    "address": "Munneswaran colony,TTL",
+    "items": [
+      {
+        "bookId": 1,
+        "title": "Atomic Habits",
+        "quantity": 1,
+        "unitPrice": 399,
+        "subtotal": 399
+      }
+    ],
+    "total": 399,
+    "status": "Placed",
+    "createdAt": "2026-10-19T11:07:57.757Z"
+  }
+]

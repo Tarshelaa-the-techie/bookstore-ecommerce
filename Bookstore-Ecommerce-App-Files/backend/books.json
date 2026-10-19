@@ -1,0 +1,84 @@
+[
+  {
+    "id": 1,
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "category": "Self Development",
+    "price": 399,
+    "stock": 11,
+    "image": ""
+  },
+  {
+    "id": 2,
+    "title": "The Alchemist",
+    "author": "Paulo Coelho",
+    "category": "Fiction",
+    "price": 299,
+    "stock": 8,
+    "image": ""
+  },
+  {
+    "id": 3,
+    "title": "Ikigai",
+    "author": "Héctor García & Francesc Miralles",
+    "category": "Lifestyle",
+    "price": 349,
+    "stock": 10,
+    "image": ""
+  },
+  {
+    "id": 4,
+    "title": "The Psychology of Money",
+    "author": "Morgan Housel",
+    "category": "Finance",
+    "price": 450,
+    "stock": 6,
+    "image": ""
+  },
+  {
+    "id": 5,
+    "title": "Wings of Fire",
+    "author": "A. P. J. Abdul Kalam",
+    "category": "Biography",
+    "price": 250,
+    "stock": 15,
+    "image": ""
+  },
+  {
+    "id": 6,
+    "title": "Deep Work",
+    "author": "Cal Newport",
+    "category": "Productivity",
+    "price": 425,
+    "stock": 7,
+    "image": ""
+  },
+  {
+    "id": 7,
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "category": "Classic",
+    "price": 275,
+    "stock": 5,
+    "image": ""
+  },
+  {
+    "id": 8,
+    "title": "The Hobbit",
+    "author": "J. R. R. Tolkien",
+    "category": "Fantasy",
+    "price": 499,
+    "stock": 4,
+    "image": ""
+  },
+ 
+  {
+    "id": 14,
+    "title": "The Overthinker",
+    "author": "Christino",
+    "category": "Fiction",
+    "price": 420,
+    "stock": 10,
+    "image": ""
+  }
+]

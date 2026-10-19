@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter & Co. | Bookstore</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">C</span><span>Chapter <b>& Co.</b><small>YOUR NEXT CHAPTER STARTS HERE</small></span></a>
+    <nav>
+      <a href="#catalog">Discover</a>
+      <a href="#admin">Manage books</a>
+      <button id="cartToggle" class="cart-button">Cart <span id="cartCount">0</span></button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">A LITTLE SPACE FOR BIG IDEAS</p>
+        <h1>Find your next<br><em>great read.</em></h1>
+        <p class="hero-description">Thoughtfully chosen stories, fresh perspectives, and books worth keeping close.</p>
+        <a class="primary-button" href="#catalog">Explore the collection <span>↗</span></a>
+      </div>
+      <div class="hero-art" aria-label="Decorative book illustration">
+        <div class="sun"></div><div class="book book-one"><span>THE ART<br>OF BEGINNING</span></div>
+        <div class="book book-two"><span>IDEAS<br>IN BLOOM</span></div><div class="book book-three"><span>SMALL<br>WONDERS</span></div>
+        <div class="art-caption">STORIES THAT STAY WITH YOU</div>
+      </div>
+    </section>
+
+    <section class="catalog section" id="catalog">
+      <div class="section-heading">
+        <div><p class="eyebrow">THE BOOKSHELF</p><h2>Browse the collection</h2></div>
+        <p id="bookCount" class="muted">Loading books...</p>
+      </div>
+      <div class="filters">
+        <label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Search title or author..."></label>
+        <select id="categoryFilter" aria-label="Filter by category"><option value="">All categories</option></select>
+        <select id="sortFilter" aria-label="Sort books"><option value="featured">Featured</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="title">Title A–Z</option></select>
+      </div>
+      <div id="bookGrid" class="book-grid"><p class="muted">Loading the bookshelf…</p></div>
+    </section>
+
+    <section class="admin-section section" id="admin">
+      <div class="section-heading"><div><p class="eyebrow">STORE DESK</p><h2>Add a new book</h2></div><p class="muted">Saved to your local file database</p></div>
+      <form id="addBookForm" class="admin-form">
+        <label>Book title<input name="title" required maxlength="120" placeholder="e.g. The Alchemist"></label>
+        <label>Author<input name="author" required maxlength="100" placeholder="e.g. Paulo Coelho"></label>
+        <label>Category<input name="category" required maxlength="60" placeholder="e.g. Fiction"></label>
+        <label>Price (₹)<input name="price" required type="number" min="1" step="0.01" placeholder="399"></label>
+        <label>Stock quantity<input name="stock" required type="number" min="0" step="1" value="10"></label>
+        <label>Cover image URL <span class="optional">(optional)</span><input name="image" type="url" placeholder="https://..."></label>
+        <button class="primary-button" type="submit">Add book <span>＋</span></button>
+      </form>
+      <p id="adminMessage" class="message" role="status"></p>
+    </section>
+  </main>
+
+  <aside id="cartPanel" class="cart-panel" aria-label="Shopping cart" aria-hidden="true">
+    <div class="cart-header"><div><p class="eyebrow">YOUR SELECTION</p><h2>Your cart</h2></div><button id="closeCart" class="icon-button" aria-label="Close cart">×</button></div>
+    <div id="cartItems" class="cart-items"><p class="muted">Your cart is empty.</p></div>
+    <div class="cart-footer"><div class="total-line"><span>Total</span><strong id="cartTotal">₹0.00</strong></div><button id="checkoutButton" class="primary-button full-width">Place order <span>↗</span></button><p class="tiny-note">Demo checkout — no payment is collected.</p></div>
+  </aside>
+  <div id="overlay" class="overlay"></div>
+  <footer><span>CHAPTER & CO.</span><span>Made for curious minds · Student mini project</span></footer>
+  <script src="script.js"></script>
+</body>
+</html>
